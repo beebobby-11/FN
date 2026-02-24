@@ -403,52 +403,71 @@ void OnTick()
    
    if(TPSType == "ATR")
    {
-      // Only enter new position if flat
-      if(g_stateManager.IsFlat())
+      // Get current state
+      double currentState = g_stateManager.GetCondition();
+      
+      // LONG ENTRY: leTrigger AND condition[1] <= 0.0
+      // (flat or short position)
+      if(leTrigger && currentState <= 0.0)
       {
-         // LONG ENTRY
-         if(leTrigger)
+         // Close opposite position if exists (if short)
+         if(currentState < 0.0)
          {
-            double atr = g_atrTPSL_Buffer[1];  // Use completed bar ATR
-            
-            // Calculate TP/SL lines
-            double entryPrice = ask;
-            double tp1Line = entryPrice + (1.0 * ProfitFactor * atr);
-            double tp2Line = entryPrice + (2.0 * ProfitFactor * atr);
-            double tp3Line = entryPrice + (3.0 * ProfitFactor * atr);
-            double slLine = entryPrice - (1.0 * ProfitFactor * atr);
-            
-            // Update state to Long Entry
-            g_stateManager.OnLongEntry(entryPrice, tp1Line, tp2Line, tp3Line, slLine);
-            
-            // Open 3 positions
-            ulong ticket1, ticket2, ticket3;
-            if(g_orderManager.OpenLongPosition(entryPrice, tp1Line, tp2Line, tp3Line, slLine,
-                                              ticket1, ticket2, ticket3))
-            {
-               // Save tickets in state manager
-               g_stateManager.SetTickets(ticket1, ticket2, ticket3);
-            }
+            if(DebugMode)
+               Print("🔄 CLOSE OPPOSITE: Closing SHORT position before LONG entry");
+            g_orderManager.CloseAllPositions();
+            g_stateManager.Reset();
          }
-         // SHORT ENTRY
-         else if(seTrigger)
+         
+         double atr = g_atrTPSL_Buffer[1];  // Use completed bar ATR
+         
+         // Calculate TP/SL lines
+         double entryPrice = ask;
+         double tp1Line = entryPrice + (1.0 * ProfitFactor * atr);
+         double tp2Line = entryPrice + (2.0 * ProfitFactor * atr);
+         double tp3Line = entryPrice + (3.0 * ProfitFactor * atr);
+         double slLine = entryPrice - (1.0 * ProfitFactor * atr);
+         
+         // Update state to Long Entry
+         g_stateManager.OnLongEntry(entryPrice, tp1Line, tp2Line, tp3Line, slLine);
+         
+         // Open 3 positions
+         ulong ticket1, ticket2, ticket3;
+         if(g_orderManager.OpenLongPosition(entryPrice, tp1Line, tp2Line, tp3Line, slLine,
+                                           ticket1, ticket2, ticket3))
          {
-            double atr = g_atrTPSL_Buffer[1];
-            
-            double entryPrice = bid;
-            double tp1Line = entryPrice - (1.0 * ProfitFactor * atr);
-            double tp2Line = entryPrice - (2.0 * ProfitFactor * atr);
-            double tp3Line = entryPrice - (3.0 * ProfitFactor * atr);
-            double slLine = entryPrice + (1.0 * ProfitFactor * atr);
-            
-            g_stateManager.OnShortEntry(entryPrice, tp1Line, tp2Line, tp3Line, slLine);
-            
-            ulong ticket1, ticket2, ticket3;
-            if(g_orderManager.OpenShortPosition(entryPrice, tp1Line, tp2Line, tp3Line, slLine,
-                                               ticket1, ticket2, ticket3))
-            {
-               g_stateManager.SetTickets(ticket1, ticket2, ticket3);
-            }
+            // Save tickets in state manager
+            g_stateManager.SetTickets(ticket1, ticket2, ticket3);
+         }
+      }
+      // SHORT ENTRY: seTrigger AND condition[1] >= 0.0
+      // (flat or long position)
+      else if(seTrigger && currentState >= 0.0)
+      {
+         // Close opposite position if exists (if long)
+         if(currentState > 0.0)
+         {
+            if(DebugMode)
+               Print("🔄 CLOSE OPPOSITE: Closing LONG position before SHORT entry");
+            g_orderManager.CloseAllPositions();
+            g_stateManager.Reset();
+         }
+         
+         double atr = g_atrTPSL_Buffer[1];
+         
+         double entryPrice = bid;
+         double tp1Line = entryPrice - (1.0 * ProfitFactor * atr);
+         double tp2Line = entryPrice - (2.0 * ProfitFactor * atr);
+         double tp3Line = entryPrice - (3.0 * ProfitFactor * atr);
+         double slLine = entryPrice + (1.0 * ProfitFactor * atr);
+         
+         g_stateManager.OnShortEntry(entryPrice, tp1Line, tp2Line, tp3Line, slLine);
+         
+         ulong ticket1, ticket2, ticket3;
+         if(g_orderManager.OpenShortPosition(entryPrice, tp1Line, tp2Line, tp3Line, slLine,
+                                            ticket1, ticket2, ticket3))
+         {
+            g_stateManager.SetTickets(ticket1, ticket2, ticket3);
          }
       }
    }
