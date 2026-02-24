@@ -102,7 +102,7 @@ bool CHeikinAshiHTF::Init()
    Print("Multiplier: ", m_multiplier, " (", m_multiplier * PeriodSeconds(m_base_tf) / 60, " minutes)");
    
    // Try to load custom indicator first
-   m_custom_handle = iCustom(m_symbol, m_base_tf, "Indicators\\HeikinAshiM90", m_multiplier);
+   m_custom_handle = iCustom(m_symbol, m_base_tf, "HeikinAshiM90", m_multiplier);
    
    if(m_custom_handle != INVALID_HANDLE)
    {
