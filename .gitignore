@@ -1,0 +1,34 @@
+# MQL5 Compiled Files
+*.ex5
+*.ex4
+
+# MetaEditor Files
+*.log
+*.tmp
+*.bak
+*~
+
+# System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Demo/Test Files (optional - uncomment if you don't want to include)
+# demo_examples/
+
+# Large Files
+*.zip
+*.rar
+*.7z
+
+# Temporary Trading Files
+*.hst
+*.fxt
+ticks/
+bases/
