@@ -48,6 +48,37 @@ iCustom(symbol, tf, "Indicators\\HeikinAshiM90", mult);  // ❌ ซ้ำ!
 
 ---
 
+## 🪟 Installation (One-Command!)
+
+### **Method 1: PowerShell Auto-Installer** ⚡ (Recommended)
+
+```powershell
+# Download repo
+git clone https://github.com/beebobby-11/FN.git
+cd FN
+
+# Run installer (auto-detect MT5)
+.\Install-MT5-EA-Auto.ps1
+```
+
+**What it does:**
+- Auto-finds MT5 Data Folder
+- Copies all files to correct locations
+- Creates folders if needed
+- Shows step-by-step next steps
+
+### **Method 2: Manual Download**
+
+1. Download: https://github.com/beebobby-11/FN/archive/refs/heads/main.zip
+2. Extract ZIP
+3. Find MT5: File → Open Data Folder → MQL5\
+4. Copy files:
+   - `HeikinAshiStrategyEA.mq5` → `MQL5\Experts\`
+   - `Include\*.mqh` → `MQL5\Include\`
+   - `Indicators\*.mq5` → `MQL5\Indicators\`
+
+---
+
 ## 📂 File Structure
 
 ```
